@@ -36,16 +36,34 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         label: "Zepto",
         logo: "https://upload.wikimedia.org/wikipedia/en/7/7d/Logo_of_Zepto.png",
         apiKey: "Zepto",
+        isComingSoon: true,
       },
+
       {
         key: "instamart",
         label: "Instamart",
         logo: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Swiggy_Logo_2024.webp",
         apiKey: "Instamart",
+        isComingSoon: true,
+      },
+      {
+        key: "flipkart",
+        label: "Flipkart",
+        logo: "https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Logo.png",
+        apiKey: "Flipkart",
+        isComingSoon: true,
       },
     ];
 
-    return platformConfigs.map((config) => {
+    const processedPlatforms = platformConfigs.map((config) => {
+      // If coming soon, return special structure
+      if (config.isComingSoon) {
+        return {
+          ...config,
+          columns: [], // No columns, just coming soon state
+        };
+      }
+
       // If loading or no data, provide structure for skeleton
       const platformData = apiData?.overview_metrics?.[config.apiKey];
 
@@ -53,7 +71,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         return {
           ...config,
           columns: [
-            { title: "Offtake", value: null, change: null },
+            { title: "Ad Revenue", value: null, change: null },
             { title: "Impressions", value: null, change: null },
             { title: "Orders", value: null, change: null },
             { title: "Ad Spends", value: null, change: null },
@@ -66,7 +84,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         ...config,
         columns: [
           {
-            title: "Offtake",
+            title: "Ad Revenue",
             value: formatCurrency(platformData.Offtake),
             change: {
               text: formatPercentage(platformData.Offtake_change),
@@ -116,6 +134,11 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
         ],
       };
     });
+
+    return {
+      active: processedPlatforms.filter(p => !p.isComingSoon),
+      comingSoon: processedPlatforms.filter(p => p.isComingSoon)
+    };
   }, [apiData]);
 
   // SmallCard Component with Skeleton Logic
@@ -200,25 +223,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
               Platform Overview
             </div>
           </div>
-          <div className="d-flex align-items-center gap-2">
-            <div
-              className="d-flex align-items-center bg-light rounded-pill px-2"
-              style={{
-                backgroundColor: "#f2f6fb",
-                border: "1px solid #dee2e6",
-                height: 34,
-                width: 220,
-              }}
-            >
-              <input
-                type="text"
-                className="form-control border-0 bg-transparent shadow-none"
-                placeholder="Search"
-                style={{ fontSize: "0.85rem" }}
-              />
-              <BsSearch size={15} color="#6c757d" />
-            </div>
-          </div>
+
         </div>
         <div
           style={{
@@ -228,7 +233,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
           }}
         >
           <div
-            className="d-flex flex-nowrap align-items-start"
+            className="d-flex flex-nowrap align-items-stretch"
             style={{
               gap: 12,
               minWidth: "100%",
@@ -261,7 +266,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
                   <BsGrid3X3GapFill size={18} className="text-secondary" />
                 </div>
 
-                {platforms[0]?.columns.map((metric, i) => (
+                {platforms.active[0]?.columns.map((metric, i) => (
                   <Button
                     key={i}
                     variant="light"
@@ -283,7 +288,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
               </div>
             </div>
 
-            {platforms.map((platform) => (
+            {platforms.active.map((platform) => (
               <div
                 key={platform.key}
                 className="flex-shrink-0"
@@ -304,7 +309,7 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
                     background: "#f9fafb",
                     marginRight: 12,
                     overflowY: "auto",
-                    scrollbarWidth: "thin",
+                    scrollbarWidth: "none",
                   }}
                 >
                   <div
@@ -379,6 +384,73 @@ const TowerPlatformOverview = ({ dateRange, formatDate, apiData, loading, error 
                 </div>
               </div>
             ))}
+
+            {platforms.comingSoon.length > 0 && (
+              <div
+                className="flex-shrink-0"
+                style={{
+                  width: "min(300px, 50vw)",
+                  minWidth: 260,
+                  display: "flex",
+                  flexDirection: "column",
+                  zIndex: 4,
+                  gap: 8,
+                }}
+              >
+                <div
+                  className="p-3 h-100 d-flex flex-column"
+                  style={{
+                    border: "1px dashed #ced4da",
+                    borderRadius: 12,
+                    background: "#f8f9fa",
+                    marginRight: 12,
+                  }}
+                >
+                  <div className="mb-4">
+                    <div
+                      className="d-flex flex-wrap justify-content-center gap-2 mb-3"
+                    >
+                      {platforms.comingSoon.map((p) => (
+                        <div
+                          key={p.key}
+                          className="bg-white rounded-circle p-1 shadow-sm border"
+                          style={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          title={p.label}
+                        >
+                          <img
+                            src={p.logo}
+                            alt={p.label}
+                            style={{ width: "80%", height: "80%", objectFit: "contain" }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div
+                      className="text-center fw-bold text-muted border py-2 px-3 mx-auto rounded-pill"
+                      style={{
+                        fontSize: "0.85rem",
+                        backgroundColor: "#fff",
+                        width: "fit-content",
+                        boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
+                      }}
+                    >
+                      COMING SOON
+                    </div>
+                  </div>
+
+                  <div className="flex-grow-1 d-flex align-items-center justify-content-center">
+                    <div className="text-center text-secondary">
+                      <div className="mb-2">
+                        <BsInfoCircle size={24} className="opacity-50" />
+                      </div>
+                      <p className="small mb-0 px-3 opacity-75">
+                        We are currently integrating these platforms to provide you with comprehensive data insights.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </Card>
