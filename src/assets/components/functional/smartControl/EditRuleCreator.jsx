@@ -44,7 +44,7 @@ const PLATFORM_MAP = {
 const BRAND_MAP = {
   continental: 2,
   samsonite: 3,
-  zydus: 1,
+  sugar: 1,
 };
 
 const EditRuleCreator = ({ editRuleData, onSave, onClose, setShowRuleModal, open = true }) => {

@@ -30,7 +30,7 @@ const Login = () => {
         setIsLoggingIn(true);
 
         try {
-            const res = await axios.post(`${url}/sugar/login`, {
+            const res = await axios.post(`${url}/zydus/login`, {
                 username: userName,
                 password: password,
             });
