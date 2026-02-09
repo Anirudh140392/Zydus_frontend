@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState, useRef, useMemo } from "react";
 import MuiDataTableComponent from "../../common/muidatatableComponent";
 import ExcelDownloadButton from "../../molecules/excelDownloadButton";
 import overviewContext from "../../../../store/overview/overviewContext";
@@ -46,7 +46,7 @@ const SearchTermInsightsDatatable = () => {
 
         try {
             const response = await fetch(
-                `https://react-api-script.onrender.com/bowlers/keyword-search-term-page?start_date=2025-06-27&end_date=2025-07-03&platform=Amazon `,
+                `https://react-api-script.onrender.com/zydus/search-term-analytics?start_date=${startDate}&end_date=${endDate}&platform=${operator}`,
                 {
                     method: "GET",
                     headers: {
@@ -96,7 +96,7 @@ const SearchTermInsightsDatatable = () => {
                     <Typography variant="body2">{params.row.keyword}</Typography>
                 </div>
             ),
-            
+
 
 
         },
@@ -227,6 +227,196 @@ const SearchTermInsightsDatatable = () => {
         },
     ];
 
+    const KeywordAnalysisColumnBlinkit = [
+        {
+            field: "keyword",
+            headerName: "SEARCH TERM",
+            minWidth: 150,
+            renderCell: (params) => (
+                <div className="text-icon-div">
+                    <Typography variant="body2">{params.row.keyword}</Typography>
+                </div>
+            ),
+        },
+        {
+            field: "campaign_count_current",
+            headerName: "# CAMPAIGNS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.campaign_count_current}
+                    percentValue={params.row.campaign_count_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+        {
+            field: "campaign_count_pct_change",
+            headerName: "CAMPAIGNS % CHANGE",
+            minWidth: 100,
+            hideable: false
+        },
+        {
+            field: "total_spend_current",
+            headerName: "TOTAL SPEND",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.total_spend_current}
+                    percentValue={params.row.total_spend_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+        
+        {
+            field: "total_revenue_current",
+            headerName: "TOTAL REVENUE",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.total_revenue_current}
+                    percentValue={params.row.total_revenue_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+       
+        {
+            field: "roas_current",
+            headerName: "ROAS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.roas_current}
+                    percentValue={params.row.roas_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+        
+        {
+            field: "impressions_current",
+            headerName: "IMPRESSIONS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.impressions_current}
+                    percentValue={params.row.impressions_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+       
+       
+        {
+            field: "atc_current",
+            headerName: "ADD TO CART",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.atc_current}
+                    percentValue={params.row.atc_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+       
+        {
+            field: "units_sold_current",
+            headerName: "UNITS SOLD",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.units_sold_current}
+                    percentValue={params.row.units_sold_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+       
+        {
+            field: "new_users_current",
+            headerName: "NEW USERS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.new_users_current}
+                    percentValue={params.row.new_users_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+      
+        {
+            field: "cpc_current",
+            headerName: "CPC",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.cpc_current}
+                    percentValue={params.row.cpc_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+       
+        {
+            field: "cpa_current",
+            headerName: "CPA",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.cpa_current}
+                    percentValue={params.row.cpa_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+      
+        {
+            field: "overall_sos_current",
+            headerName: "OVERALL SOS",
+            minWidth: 150,
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent
+                    mainValue={params.row.overall_sos_current}
+                    percentValue={params.row.overall_sos_pct_change}
+                />
+            ),
+            type: "number",
+            align: "left",
+            headerAlign: "left",
+        },
+      
+    ];
+
+    const columns = useMemo(() => {
+        if (operator === "Amazon") return KeywordAnalysisColumnAmazon;
+        if (operator === "Blinkit") return KeywordAnalysisColumnBlinkit;
+        return KeywordAnalysisColumnAmazon; // default to Amazon
+    }, [operator]);
+
     return (
         <React.Fragment>
             <div className="py-2 border-bottom">
@@ -243,8 +433,9 @@ const SearchTermInsightsDatatable = () => {
                 <MuiDataTableComponent
                     isLoading={isLoading}
                     isExport={true}
-                    columns={KeywordAnalysisColumnAmazon}
+                    columns={columns}
                     data={keywordData}
+                    getRowId={(row) => row.keyword}
                 />
             </div>
         </React.Fragment>

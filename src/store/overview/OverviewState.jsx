@@ -132,15 +132,15 @@ const OverviewState = (props) => {
 
     const getOverviewData = useCallback(async (forceRefresh = false) => {
         if (!operator) return;
-        
+
         // Prevent duplicate calls
         if (apiCallInProgress.current && !forceRefresh) {
             return;
         }
-        
+
         apiCallInProgress.current = true;
         setOverviewLoading(true);
-        
+
         const token = localStorage.getItem("accessToken");
         if (!token) {
             console.error("No access token found");
@@ -162,7 +162,7 @@ const OverviewState = (props) => {
 
         try {
             if (forceRefresh) {
-                try { localStorage.removeItem(cacheKey); } catch (_) {}
+                try { localStorage.removeItem(cacheKey); } catch (_) { }
             } else {
                 const cached = getCache(cacheKey);
                 if (cached) {
@@ -188,7 +188,7 @@ const OverviewState = (props) => {
             const data = await response.json();
             setOverviewData(data);
             if (forceRefresh) {
-                try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (_) {}
+                try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (_) { }
             }
         } catch (error) {
             console.error("Failed to fetch overview data:", error.message);
@@ -198,6 +198,12 @@ const OverviewState = (props) => {
             apiCallInProgress.current = false;
         }
     }, [dateRange, operator, selectedBrand, formatDate]);
+
+    useEffect(() => {
+        if (localStorage.getItem("accessToken")) {
+            getOverviewData();
+        }
+    }, [getOverviewData]);
 
     useEffect(() => {
         setCampaignName("")

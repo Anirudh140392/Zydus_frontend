@@ -442,7 +442,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                {!["Blinkit","Amazon","Zepto","Swiggy"].includes(operatorName) && (
+                                {["Blinkit","Amazon","Zepto","Swiggy"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/keyword-analysis${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`

@@ -28,7 +28,7 @@ const AddEditGoal = ({ show, onClose, onSubmit, initialData = null, operator }) 
     }
 
     axios.get(
-      `https://react-api-script.onrender.com/rules_engine/metadata/campaigns/?brand_id=3&page=1&page_size=50&platform=${operator}`,
+      `https://react-api-script.onrender.com/rules_engine/metadata/campaigns/?brand_id=6&page=1&page_size=50&platform=Blinkit`,
       { headers: { Authorization: `Bearer ${token}` } }
     )
       .then(res => setCampaignList(res?.data?.campaigns?.data || []))
@@ -59,8 +59,8 @@ const AddEditGoal = ({ show, onClose, onSubmit, initialData = null, operator }) 
     if (!validateForm()) return;
 
     const payload = {
-      platform: "Flipkart",
-      brand: "Samsonite",
+      platform: "Blinkit",
+      brand: "Zydus",
       goal_name: goalName,
       data_level: dataLevel.toUpperCase(),
       data_operator: "EQUALS",
@@ -81,7 +81,7 @@ const AddEditGoal = ({ show, onClose, onSubmit, initialData = null, operator }) 
       }
 
       await axios.post(
-        `https://react-api-script.onrender.com/goalsengine/goals/create?platform=${operator}&brand=zydus`,
+        `https://react-api-script.onrender.com/goalsengine/goals/create?platform=Blinkit&brand=Zydus`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );

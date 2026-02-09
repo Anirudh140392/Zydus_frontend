@@ -252,6 +252,18 @@ const OverviewComponent = () => {
         },
     ];
 
+    const NewCategoryColumns = useMemo(() => [
+        { field: "Category", headerName: "CATEGORY", minWidth: 200, type: "string", align: "left", headerAlign: "left" },
+        { field: "Estimated_Budget_Consumed", headerName: "SPEND", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Clicks", headerName: "CLICKS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Impressions", headerName: "IMPRESSIONS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Total_Sales", headerName: "SALES", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "Total_Orders", headerName: "ORDERS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "ROAS", headerName: "ROAS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "CPM", headerName: "CPM", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+        { field: "ACOS", headerName: "ACOS", minWidth: 150, type: "number", align: "left", headerAlign: "left" },
+    ], []);
+
 
 
     const columns = useMemo(() => {
@@ -264,11 +276,7 @@ const OverviewComponent = () => {
     }, [operator, brands]);
 
 
-    useEffect(() => {
-        if (localStorage.getItem("accessToken")) {
-            getOverviewData();
-        }
-    }, [operator, dateRange, getOverviewData]);
+
 
     const CTRWidget = ({ firstHeadingText, firstHeadingData, secondHeadingText, secondHeadingData, isSecondHeadingRequired = true }) => {
         return (
@@ -317,6 +325,8 @@ const OverviewComponent = () => {
     });
     const filteredSubCatData = overviewData?.sub_cat_table?.filter(row => row.sub_category?.trim() !== '');
 
+    const filteredNewCatData = overviewData?.new_cat_table?.filter(row => row.Category?.trim() !== '') || [];
+
     return (
         <React.Fragment>
             <div className="shadow-box-con top-overview-con">
@@ -340,6 +350,25 @@ const OverviewComponent = () => {
                                     isExport={true}
                                     columns={columns}
                                     data={filteredCatData} />
+                            </div>
+                            <div className="shadow-box-con top-overview-con">
+                                <div className="agrregated-shadow-box-con aggregated-view-con">
+                                    <div className="px-3 py-2 border-bottom">
+                                        <div className="row">
+                                            <div className="col-lg-6">
+                                                <h5 className="mb-0">Category View</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="datatable-con-overview">
+                                        <MuiDataTableComponent
+                                            isExport={true}
+                                            columns={NewCategoryColumns}
+                                            data={filteredNewCatData}
+                                            getRowId={(row) => row.id || row.Category + Math.random()} // fallback id
+                                        />
+                                    </div>
+                                </div>
                             </div>
                             <div className="shadow-box-con top-overview-con">
                                 <AggregatedView />

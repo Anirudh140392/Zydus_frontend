@@ -49,9 +49,7 @@ const PLATFORM_MAP = {
 };
 
 const BRAND_MAP = {
-  continental: 2,
-   samsonite: 3,
-  sugar: 1,
+ zydus: 6,
 };
 const PLATFORM_OPTIONS = Object.keys(PLATFORM_MAP);
 

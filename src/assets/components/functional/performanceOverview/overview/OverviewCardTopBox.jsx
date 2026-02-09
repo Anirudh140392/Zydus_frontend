@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { Card, Container } from "react-bootstrap";
 import {
   LineChart,
@@ -33,119 +33,30 @@ function roasColor(roas) {
 
 const OverviewCardTopBox = ({ overViewData }) => {
   const [showInsightsPanel, setShowInsightsPanel] = useState(false);
-  const [chartData, setChartData] = useState({});
-  const [loading, setLoading] = useState(false);
-
   const dataContext = useContext(overviewContext);
-  const { dateRange, formatDate } = dataContext || {};
-  const [searchParams] = useSearchParams();
-  const operator = searchParams.get("operator");
+  const { overviewLoading } = dataContext || {};
 
+  // Extract metrics from overViewData
   const metrics = overViewData?.metrics_data || {};
 
-  // Fetch daily data from API
-  useEffect(() => {
-    const fetchDailyData = async () => {
-      if (!operator || !dateRange || !dateRange[0]) return;
+  // Transform datewise_metrics from prop to chart data format
+  const chartData = useMemo(() => {
+    const dailyMetrics = overViewData?.datewise_metrics;
+    if (!dailyMetrics) return {};
 
-      setLoading(true);
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        console.error("No access token found");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const startDate = formatDate(dateRange[0].startDate);
-        const endDate = formatDate(dateRange[0].endDate);
-        const host = "https://react-api-script.onrender.com";
-
-        const response = await fetch(
-          `${host}/zydus/new-overview?start_date=${startDate}&end_date=${endDate}&platform=${operator}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("API Response:", data);
-
-        // Transform API response to daily chart data
-        const transformedData = {};
-
-        // Map datewise_metrics to chart format
-        if (data?.datewise_metrics) {
-          const metrics = data.datewise_metrics;
-
-          // Map impressions
-          transformedData.impressions = (metrics.impressions || []).map((item) => ({
-            name: dayjs(item.date).format("MMM DD"),
-            value: typeof item.value === 'number' ? item.value : 0,
-          }));
-
-          // Map CPM
-          transformedData.cpm = (metrics.cpm || []).map((item) => ({
-            name: dayjs(item.date).format("MMM DD"),
-            value: typeof item.value === 'number' ? item.value : 0,
-          }));
-
-          // Map orders
-          transformedData.orders = (metrics.orders || []).map((item) => ({
-            name: dayjs(item.date).format("MMM DD"),
-            value: typeof item.value === 'number' ? item.value : 0,
-          }));
-
-          // Map spend
-          transformedData.spends = (metrics.spend || []).map((item) => ({
-            name: dayjs(item.date).format("MMM DD"),
-            value: typeof item.value === 'number' ? item.value : 0,
-          }));
-
-          // Map ROAS
-          transformedData.roas = (metrics.roas || []).map((item) => ({
-            name: dayjs(item.date).format("MMM DD"),
-            value: typeof item.value === 'number' ? item.value : 0,
-          }));
-
-          console.log("Transformed Data:", transformedData);
-          setChartData(transformedData);
-        }
-      } catch (error) {
-        console.error("Failed to fetch daily data:", error);
-        // Set empty chart data on error
-        setChartData({
-          impressions: [],
-          cpm: [],
-          orders: [],
-          spends: [],
-          roas: [],
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDailyData();
-  }, [operator, dateRange, formatDate]);
-
-  // Generate sample trend data for each metric
-  const generateChartData = (baseValue, variance = 0.15) => {
-    const months = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
-    return months.map((m) => ({
-      name: m,
-      value: baseValue * (1 + (Math.random() - 0.5) * 2 * variance),
+    const transform = (data) => (data || []).map((item) => ({
+      name: dayjs(item.date).format("MMM DD"),
+      value: typeof item.value === 'number' ? item.value : 0,
     }));
-  };
 
+    return {
+      impressions: transform(dailyMetrics.impressions),
+      cpm: transform(dailyMetrics.avg_cpm || dailyMetrics.cpm),
+      orders: transform(dailyMetrics.orders),
+      spends: transform(dailyMetrics.spend || dailyMetrics.spends),
+      roas: transform(dailyMetrics.roas || dailyMetrics.avg_roas),
+    };
+  }, [overViewData]);
 
   const metricsCards = [
     {
@@ -220,7 +131,7 @@ const OverviewCardTopBox = ({ overViewData }) => {
             </div>
             <h5 className="mb-0 fw-semibold text-dark">Performance Metrics</h5>
             <span className="badge bg-light text-dark ms-2">Overview</span>
-            {loading && <span className="badge bg-warning text-dark ms-2">Loading...</span>}
+            {overviewLoading && <span className="badge bg-warning text-dark ms-2">Loading...</span>}
           </div>
 
 
@@ -318,7 +229,7 @@ const OverviewCardTopBox = ({ overViewData }) => {
                         />
                       </LineChart>
                     </ResponsiveContainer>
-                  ) : loading ? (
+                  ) : overviewLoading ? (
                     <div
                       style={{
                         display: "flex",
