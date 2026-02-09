@@ -82,7 +82,7 @@ const SmartControlDatatable = () => {
   const [selectedRule, setSelectedRule] = useState(null);
   const [rulesData, setRulesData] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [updatingRuleId, setUpdatingRuleId] = useState(null);
   const [deletingRuleId, setDeletingRuleId] = useState(null);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
@@ -127,7 +127,10 @@ const SmartControlDatatable = () => {
   };
 
   const getRulesData = async (forceRefresh = true) => {
-    if (!operator) return;
+    if (!operator) {
+      setIsLoading(false);
+      return;
+    }
 
     // Try to get cached data first (unless force refresh)
     if (!forceRefresh) {
@@ -135,6 +138,7 @@ const SmartControlDatatable = () => {
       if (cachedData) {
         setRulesData(cachedData);
         setIsFromCache(true);
+        setIsLoading(false);
         console.log('Loaded rules from cache');
         return;
       }
@@ -189,6 +193,7 @@ const SmartControlDatatable = () => {
       } else {
         console.error("Failed to fetch rules data:", error.message);
         handleSnackbarOpen("Failed to fetch rules data", "error");
+        setRulesData({ data: [] });
       }
     } finally {
       setIsLoading(false);
@@ -246,12 +251,42 @@ const SmartControlDatatable = () => {
     </Tooltip>
   );
 
+  const renderArrayField = (fieldName) => (params) => {
+    const value = params.value;
+    let displayText = "";
+
+    if (Array.isArray(value)) {
+      displayText = `[${value.length}] item${value.length !== 1 ? "s" : ""}`;
+    } else if (typeof value === "object" && value !== null) {
+      displayText = "[1] item";
+    } else {
+      displayText = "-";
+    }
+
+    return (
+      <Tooltip title={JSON.stringify(value, null, 2)} arrow placement="top">
+        <span
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "block",
+            width: "100%",
+            cursor: "pointer"
+          }}
+        >
+          {displayText}
+        </span>
+      </Tooltip>
+    );
+  };
+
   const SmartControlColumn = useMemo(() => [
     { field: 'rule_id', headerName: '#ID', minWidth: 100, type: "number", renderCell: withTooltip },
     { field: 'rule_name', headerName: 'RULE NAME', minWidth: 220, renderCell: withTooltip },
     { field: 'platform_name', headerName: 'PLATFORM', minWidth: 130, renderCell: withTooltip },
     { field: 'frequency', headerName: 'FREQUENCY TIME', minWidth: 150, renderCell: withTooltip },
-    { field: 'frequency_type', headerName: 'FREQUENCY TYPE', minWidth: 160, renderCell: withTooltip },
+
 
     {
       field: 'status',
@@ -319,6 +354,7 @@ const SmartControlDatatable = () => {
         </span>
       ),
     },
+     { field: 'description', headerName: 'DESCRIPTION', minWidth: 250, renderCell: withTooltip },
 
     { field: 'pf_id', headerName: 'PF ID', minWidth: 100, renderCell: withTooltip },
     { field: 'user_id', headerName: 'USER ID', minWidth: 120, renderCell: withTooltip },
@@ -329,9 +365,9 @@ const SmartControlDatatable = () => {
     { field: 'sub_brand_id', headerName: 'SUB BRAND ID', minWidth: 140, renderCell: withTooltip },
     { field: 'sub_brand_name', headerName: 'SUB BRAND NAME', minWidth: 180, renderCell: withTooltip },
 
-    { field: 'description', headerName: 'DESCRIPTION', minWidth: 250, renderCell: withTooltip },
-    { field: 'targets', headerName: 'TARGETS', minWidth: 250, renderCell: withTooltip },
-    { field: 'campaigns', headerName: 'CAMPAIGNS', minWidth: 250, renderCell: withTooltip },
+   
+    { field: 'targets', headerName: 'TARGETS', minWidth: 250, renderCell: renderArrayField('targets') },
+    { field: 'campaigns', headerName: 'CAMPAIGNS', minWidth: 250, renderCell: renderArrayField('campaigns') },
   ], [updatingRuleId, deletingRuleId]);
 
 
@@ -555,13 +591,19 @@ const SmartControlDatatable = () => {
       </Box>
 
       <div className="datatable-con">
-        <MuiDataTableComponent
-          isLoading={isLoading}
-          columns={SmartControlColumn}
-          data={SmartControlData}
-          dynamicKey='keyword'
-          getRowId={(row) => row.rule_id}
-        />
+        {(isLoading || !rulesData) ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+            <CircularProgress size={60} />
+          </Box>
+        ) : (
+          <MuiDataTableComponent
+            isLoading={isLoading}
+            columns={SmartControlColumn}
+            data={SmartControlData}
+            dynamicKey='keyword'
+            getRowId={(row) => row.rule_id}
+          />
+        )}
       </div>
 
       <Snackbar

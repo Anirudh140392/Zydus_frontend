@@ -252,12 +252,7 @@ const SearchTermInsightsDatatable = () => {
             align: "left",
             headerAlign: "left",
         },
-        {
-            field: "campaign_count_pct_change",
-            headerName: "CAMPAIGNS % CHANGE",
-            minWidth: 100,
-            hideable: false
-        },
+        
         {
             field: "total_spend_current",
             headerName: "TOTAL SPEND",

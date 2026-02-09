@@ -49,7 +49,7 @@ const PLATFORM_MAP = {
 };
 
 const BRAND_MAP = {
- zydus: 6,
+  zydus: 6,
 };
 const PLATFORM_OPTIONS = Object.keys(PLATFORM_MAP);
 
@@ -181,7 +181,7 @@ const AddRuleCreator = ({ operator, onSave, onClose, setShowRuleModal, open = tr
       const token = localStorage.getItem("accessToken");
 
       let url = `https://react-api-script.onrender.com/rules_engine/metadata/campaigns/?brand_id=${brandId}&platform=${platformName}&page=${campaignPage}&page_size=25`;
-      
+
       if (campaignName) {
         url += `&campaign_name=${encodeURIComponent(campaignName)}`;
       }
@@ -199,7 +199,7 @@ const AddRuleCreator = ({ operator, onSave, onClose, setShowRuleModal, open = tr
       const json = await response.json();
 
       // your API returns {data: []}
-      const list = json.data || json.campaigns || []; 
+      const list = json.data || json.campaigns || [];
 
       const newCampaigns = (list || [])?.map((c) => ({
         campaign_id:
@@ -250,7 +250,7 @@ const AddRuleCreator = ({ operator, onSave, onClose, setShowRuleModal, open = tr
     try {
       const token = localStorage.getItem("accessToken");
       let url = `https://react-api-script.onrender.com/rules_engine/metadata/campaigns/${campaignId}/?brand_id=${brandId}&platform=${platformName}&page=${page}&page_size=25`;
-      
+
       if (searchTerm) {
         url += `&search_term=${encodeURIComponent(searchTerm)}`;
       }
@@ -315,62 +315,62 @@ const AddRuleCreator = ({ operator, onSave, onClose, setShowRuleModal, open = tr
   };
 
   // Async search handler for campaigns
- // Async search handler for campaigns
-// Async search handler for campaigns
-const searchCampaigns = async (query, page = 1, signal) => {
-  if (!brandName || !platformName) return { items: [], hasMore: false };
+  // Async search handler for campaigns
+  // Async search handler for campaigns
+  const searchCampaigns = async (query, page = 1, signal) => {
+    if (!brandName || !platformName) return { items: [], hasMore: false };
 
-  const brandId = BRAND_MAP[brandName?.toLowerCase()];
-  if (!brandId) return { items: [], hasMore: false };
+    const brandId = BRAND_MAP[brandName?.toLowerCase()];
+    if (!brandId) return { items: [], hasMore: false };
 
-  try {
-    const token = localStorage.getItem("accessToken");
-    
-    // Base URL with required params and pagination
-    let url = `https://react-api-script.onrender.com/rules_engine/metadata/campaigns/?brand_id=${brandId}&platform=${platformName}&page=${page}&page_size=25`;
-    
-    // Add search params only if query exists
-    if (query && query.trim()) {
-      const trimmedQuery = query.trim();
-      
-      // Check if query is numeric (likely campaign_id)
-      const isNumeric = /^\d+$/.test(trimmedQuery);
-      
-      if (isNumeric) {
-        // Search by campaign_id
-        url += `&campaign_id=${encodeURIComponent(trimmedQuery)}`;
-      } else {
-        // Search by campaign_name
-        url += `&campaign_name=${encodeURIComponent(trimmedQuery)}`;
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      // Base URL with required params and pagination
+      let url = `https://react-api-script.onrender.com/rules_engine/metadata/campaigns/?brand_id=${brandId}&platform=${platformName}&page=${page}&page_size=25`;
+
+      // Add search params only if query exists
+      if (query && query.trim()) {
+        const trimmedQuery = query.trim();
+
+        // Check if query is numeric (likely campaign_id)
+        const isNumeric = /^\d+$/.test(trimmedQuery);
+
+        if (isNumeric) {
+          // Search by campaign_id
+          url += `&campaign_id=${encodeURIComponent(trimmedQuery)}`;
+        } else {
+          // Search by campaign_name
+          url += `&campaign_name=${encodeURIComponent(trimmedQuery)}`;
+        }
       }
+
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal: signal, // Pass abort signal
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch campaigns");
+
+      const json = await response.json();
+      const list = json.campaigns?.data || json.data || json.campaigns || [];
+
+      const items = (list || []).map((c) => ({
+        id: c.campaign_id ?? c.id ?? c.CampaignId ?? c.campaignId ?? "",
+        name: `ID: ${c.campaign_id ?? c.id} - ${c.campaign_name ?? c.name ?? c.campaignName ?? ""}`,
+        campaign_id: c.campaign_id ?? c.id ?? c.CampaignId ?? c.campaignId ?? "",
+        campaign_name: c.campaign_name ?? c.name ?? c.campaignName ?? c.title ?? "",
+      }));
+
+      // Check if there are more items (page_size is 5)
+      return { items, hasMore: items.length === 5 };
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error("Error searching campaigns:", err);
+      }
+      return { items: [], hasMore: false };
     }
-
-    const response = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
-      signal: signal, // Pass abort signal
-    });
-
-    if (!response.ok) throw new Error("Failed to fetch campaigns");
-
-    const json = await response.json();
-    const list = json.campaigns?.data || json.data || json.campaigns || [];
-
-    const items = (list || []).map((c) => ({
-      id: c.campaign_id ?? c.id ?? c.CampaignId ?? c.campaignId ?? "",
-      name: `ID: ${c.campaign_id ?? c.id} - ${c.campaign_name ?? c.name ?? c.campaignName ?? ""}`,
-      campaign_id: c.campaign_id ?? c.id ?? c.CampaignId ?? c.campaignId ?? "",
-      campaign_name: c.campaign_name ?? c.name ?? c.campaignName ?? c.title ?? "",
-    }));
-
-    // Check if there are more items (page_size is 5)
-    return { items, hasMore: items.length === 5 };
-  } catch (err) {
-    if (err.name !== 'AbortError') {
-      console.error("Error searching campaigns:", err);
-    }
-    return { items: [], hasMore: false };
-  }
-};
+  };
 
   // Async search handler for keywords
   const searchKeywords = async (campaignId, index, query, page = 1) => {
@@ -381,9 +381,9 @@ const searchCampaigns = async (query, page = 1, signal) => {
 
     try {
       const token = localStorage.getItem("accessToken");
-      
+
       let url = `https://react-api-script.onrender.com/rules_engine/metadata/campaigns/${campaignId}/?brand_id=${brandId}&platform=${platformName}&page=${page}&page_size=25`;
-      
+
       if (query) {
         url += `&search_term=${encodeURIComponent(query)}`;
       }
@@ -404,17 +404,29 @@ const searchCampaigns = async (query, page = 1, signal) => {
             ? data
             : [];
 
-      const items = (keywordsListRaw || []).map((k) => ({
-        id: k.KeywordName ?? k.keyword ?? k.name ?? "",
-        name: k.KeywordName ?? k.keyword ?? k.name ?? "",
-        keyword: k.KeywordName ?? k.keyword ?? k.name ?? "",
-        KeywordName: k.KeywordName ?? k.keyword ?? k.name ?? "",
-        bid: k.bid ?? k.defaultBid ?? k.default_bid ?? "",
-        match_type: k.KeywordMatchType ?? k.matchType ?? k.match_type ?? "",
-        ad_group_id: k.adGroupId ?? k.ad_group_id ?? k.adgroupId ?? "",
-        ad_group_name: k.adGroupName ?? k.ad_group_name ?? k.adgroupName ?? "",
-        campaign_id: k.campaign_id ?? k.CampaignId ?? campaignId,
-      }));
+      const items = (keywordsListRaw || []).map((k) => {
+        const keywordTxt = k.Targeting_Value ?? k.KeywordName ?? k.keyword ?? k.name ?? "";
+
+        // Case-insensitive check for bid or cpm
+        const getRobustBid = (obj) => {
+          const keys = Object.keys(obj);
+          const bidKey = keys.find(k => k.toLowerCase() === 'bid');
+          const cpmKey = keys.find(k => k.toLowerCase() === 'cpm');
+          return obj[bidKey] ?? obj[cpmKey] ?? obj.defaultBid ?? obj.default_bid ?? "";
+        };
+
+        return {
+          id: keywordTxt,
+          name: keywordTxt,
+          keyword: keywordTxt,
+          KeywordName: keywordTxt,
+          bid: getRobustBid(k),
+          match_type: k.Match_Type ?? k.KeywordMatchType ?? k.matchType ?? k.match_type ?? "",
+          ad_group_id: k.adGroupId ?? k.ad_group_id ?? k.adgroupId ?? "",
+          ad_group_name: k.adGroupName ?? k.ad_group_name ?? k.adgroupName ?? "",
+          campaign_id: k.campaign_id ?? k.CampaignId ?? campaignId,
+        };
+      });
 
       return { items, hasMore: items.length === 25 };
     } catch (err) {
@@ -545,7 +557,7 @@ const searchCampaigns = async (query, page = 1, signal) => {
 
     setTargets(updated);
   };
-  console.log('targets', targets); 
+  console.log('targets', targets);
 
   // STATUS RULE FUNCTIONS
   const addAction = () =>
@@ -648,7 +660,7 @@ const searchCampaigns = async (query, page = 1, signal) => {
       brand_name: brandName,
       brand_id: BRAND_MAP[brandName?.toLowerCase()] || null,
       description,
-      //frequency: frequencyNumber > 1 ? "" : frequency,
+      frequency: Number(frequencyNumber) === 1 ? frequency : "",
       frequency_number: Number(frequencyNumber) || 1,
 
       placements,
@@ -1286,14 +1298,16 @@ const searchCampaigns = async (query, page = 1, signal) => {
                                       <AsyncSearchDropdown
                                         label="Keyword"
                                         placeholder="Search keywords..."
+                                        allowCustomValue={true}
                                         fetchFn={(query, page) => searchKeywords(t.campaign_id, i, query, page)}
                                         onSelect={(item) => {
-                                          updateTargetField(i, "target_identifier", item.KeywordName);
-                                          updateTargetField(i, "keyword_id", item.KeywordName);
-                                          updateTargetField(i, "bid_value", item.bid);
-                                          updateTargetField(i, "match_type", item.match_type);
-                                          updateTargetField(i, "ad_group_id", item.ad_group_id);
-                                          updateTargetField(i, "ad_group_name", item.ad_group_name);
+                                          const kw = item.KeywordName || item.name || item.keyword || "";
+                                          updateTargetField(i, "target_identifier", kw);
+                                          updateTargetField(i, "keyword_id", kw);
+                                          updateTargetField(i, "bid_value", item.bid || "");
+                                          updateTargetField(i, "match_type", item.match_type || "");
+                                          updateTargetField(i, "ad_group_id", item.ad_group_id || "");
+                                          updateTargetField(i, "ad_group_name", item.ad_group_name || "");
                                         }}
                                         valueKey="id"
                                         labelKey="name"

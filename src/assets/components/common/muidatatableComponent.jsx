@@ -159,8 +159,15 @@ const MuiDataTableComponent = (props) => {
     );
 
     return (
-        <Box sx={{ height: "100%", overflowY: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            {(isLoading || isLoadingData) ? (<CircularProgress />) : (
+        <Box sx={{
+            height: "100%",
+            minHeight: "400px",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+        }}>
+            {(isLoading || isLoadingData) ? (<CircularProgress size={60} />) : (
                 <DataGrid
                     rows={uniqueData}
                     columns={columns}

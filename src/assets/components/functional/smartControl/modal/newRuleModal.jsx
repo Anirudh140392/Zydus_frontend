@@ -8,8 +8,7 @@ const NewRuleModal = ({ showRuleModal, setShowRuleModal, getRulesData, operator 
             <AddRuleCreator
                 open={showRuleModal}
                 setShowRuleModal={setShowRuleModal}
-                showRuleModal={showRuleModal}
-                getRulesData={getRulesData}
+                onSave={() => getRulesData(true)}
                 operator={operator}
                 onClose={() => setShowRuleModal(false)}
             />

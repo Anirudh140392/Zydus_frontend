@@ -24,6 +24,7 @@ export default function AsyncSearchDropdown({
   valueKey = "id",
   labelKey = "name",
   selectedValue,
+  allowCustomValue = false,
 }) {
   const [query, setQuery] = useState("");
   const [items, setItems] = useState([]);
@@ -101,7 +102,7 @@ export default function AsyncSearchDropdown({
 
       setItems((prev) => (append ? [...prev, ...received] : received));
       setHasMore(Boolean(result.hasMore));
-      
+
       // Auto-open if we have items and user is actively searching
       if (received && received.length > 0 && searchText) {
         setAnchorEl(inputRef.current);
@@ -152,7 +153,7 @@ export default function AsyncSearchDropdown({
     const willOpen = !open;
     setAnchorEl(inputRef.current);
     setOpen(willOpen);
-    
+
     // If opening and no items, load them
     if (willOpen && items.length === 0) {
       loadItems("", 1, false);
@@ -243,12 +244,36 @@ export default function AsyncSearchDropdown({
               </Box>
             ) : (
               <>
-                {items.length === 0 ? (
+                {(items.length === 0 && !allowCustomValue) ? (
                   <Box sx={{ p: 2, textAlign: "center" }}>
                     <Typography color="textSecondary">No results found</Typography>
                   </Box>
                 ) : (
                   <List dense>
+                    {allowCustomValue && displayValue && (
+                      <ListItemButton
+                        onClick={() => handleSelect({
+                          [labelKey]: displayValue,
+                          [valueKey]: 'custom',
+                          isCustom: true,
+                          KeywordName: displayValue,
+                          name: displayValue,
+                          id: 'custom'
+                        })}
+                        sx={{
+                          padding: "12px 16px",
+                          borderBottom: "2px solid rgba(102,126,234,0.2)",
+                          backgroundColor: "rgba(102,126,234,0.08)",
+                          "&:hover": { backgroundColor: "rgba(102,126,234,0.12)" },
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600, color: '#667eea' }}>
+                            Use Custom: "{displayValue}"
+                          </Typography>
+                        </Box>
+                      </ListItemButton>
+                    )}
                     {items.map((item) => (
                       <ListItemButton
                         key={item[valueKey]}
