@@ -21,46 +21,46 @@ const TowerForAll = ({ dateRange, formatDate, apiData, loading, error }) => {
         {
           title: "Offtake",
           value: formatCurrency(apiData.overview_metrics.All.Offtake),
-          sub: "for MTD",
+          sub: "",
           change: formatPercentage(apiData.overview_metrics.All.Offtake_change),
           changeColor: getChangeColorClass(apiData.overview_metrics.All.Offtake_change),
-          prevText: "vs Previous Month",
+          prevText: "",
           chartData: transformGraphData(apiData.overview_metrics.All.Offtake_graph),
         },
         {
           title: "Ad Spends",
           value: formatCurrency(apiData.overview_metrics.All.Ad_Spends),
-          sub: "for MTD",
+          sub: "",
           change: formatPercentage(apiData.overview_metrics.All.Ad_Spends_change),
           changeColor: getChangeColorClass(apiData.overview_metrics.All.Ad_Spends_change),
-          prevText: "vs Previous Month",
+          prevText: "",
           chartData: transformGraphData(apiData.overview_metrics.All.Ad_Spends_graph),
         },
         {
           title: "ROAS",
           value: formatROAS(apiData.overview_metrics.All.ROAS),
-          sub: "for MTD (Avg.)",
+          sub: "",
           change: formatPercentage(apiData.overview_metrics.All.ROAS_change),
           changeColor: getChangeColorClass(apiData.overview_metrics.All.ROAS_change),
-          prevText: "vs Previous Month",
+          prevText: "",
           chartData: transformGraphData(apiData.overview_metrics.All.ROAS_graph),
         },
         {
           title: "Impressions",
           value: formatLargeNumber(apiData.overview_metrics.All.Impressions * 1000000),
-          sub: "for MTD",
+          sub: "",
           change: formatPercentage(apiData.overview_metrics.All.Impressions_change),
           changeColor: getChangeColorClass(apiData.overview_metrics.All.Impressions_change),
-          prevText: "vs Previous Month",
+          prevText: "",
           chartData: transformGraphData(apiData.overview_metrics.All.Impressions_graph),
         },
         {
           title: "Orders",
           value: formatLargeNumber(apiData.overview_metrics.All.Orders * 1000),
-          sub: "for MTD",
+          sub: "",
           change: formatPercentage(apiData.overview_metrics.All.Orders_change),
           changeColor: getChangeColorClass(apiData.overview_metrics.All.Orders_change),
-          prevText: "vs Previous Month",
+          prevText: "",
           chartData: transformGraphData(apiData.overview_metrics.All.Orders_graph),
         },
       ];
@@ -68,11 +68,11 @@ const TowerForAll = ({ dateRange, formatDate, apiData, loading, error }) => {
 
     // Default structure with null values for loading state
     return [
-      { title: "Offtake", value: null, sub: "for MTD", prevText: "vs Previous Month" },
-      { title: "Ad Spends", value: null, sub: "for MTD", prevText: "vs Previous Month" },
-      { title: "ROAS", value: null, sub: "for MTD (Avg.)", prevText: "vs Previous Month" },
-      { title: "Impressions", value: null, sub: "for MTD", prevText: "vs Previous Month" },
-      { title: "Orders", value: null, sub: "for MTD", prevText: "vs Previous Month" },
+      { title: "Offtake", value: null, sub: "", prevText: "" },
+      { title: "Ad Spends", value: null, sub: "", prevText: "" },
+      { title: "ROAS", value: null, sub: "", prevText: "" },
+      { title: "Impressions", value: null, sub: "", prevText: "" },
+      { title: "Orders", value: null, sub: "", prevText: "" },
     ];
   }, [apiData]);
 
@@ -108,10 +108,6 @@ const TowerForAll = ({ dateRange, formatDate, apiData, loading, error }) => {
             </div>
             <h5 className="mb-0 fw-semibold text-dark">Watchtower Overview</h5>
             <span className="badge bg-light text-dark ms-2">All</span>
-          </div>
-          <div className="bg-light rounded-pill px-3 py-1 small shadow-sm">
-            <span className="fw-semibold text-dark">MTD</span>{" "}
-            <span className="text-muted">vs Previous Month</span>
           </div>
         </div>
 
@@ -176,33 +172,7 @@ const TowerForAll = ({ dateRange, formatDate, apiData, loading, error }) => {
 
 
 
-                  {/* Mini Line Chart */}
-                  <div style={{ height: 80 }} className="mt-2">
-                    {showSkeleton ? (
-                      <div style={{ height: '100%', background: '#f8f9fa', borderRadius: 8 }}></div>
-                    ) : (
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={card.chartData}>
-                          <XAxis dataKey="name" hide />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: "#fff",
-                              border: "1px solid #ddd",
-                              fontSize: "12px",
-                            }}
-                          />
-                          <Line
-                            type="monotone"
-                            dataKey="value"
-                            stroke={lineColor}
-                            strokeWidth={2}
-                            dot={{ r: 3 }}
-                            activeDot={{ r: 5 }}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    )}
-                  </div>
+                  {/* Mini Line Chart removed as per request */}
                 </Card.Body>
               </Card>
             );
@@ -230,7 +200,7 @@ const TowerForAll = ({ dateRange, formatDate, apiData, loading, error }) => {
           }
         `}
       </style>
-    </Container>
+    </Container >
   );
 };
 

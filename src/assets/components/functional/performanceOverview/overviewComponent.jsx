@@ -61,13 +61,18 @@ const OverviewComponent = () => {
             type: "number",
             align: "left",
             headerAlign: "left",
+             renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Estimated_Budget_Consumed} percentValue={params.row.Spend_change} />
+            ), type: "number", align: "left",
+            headerAlign: "left",
         },
-        {
+         {
             field: "Clicks",
             headerName: "CLICKS",
             minWidth: 150,
-            type: "number",
-            align: "left",
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Clicks} percentValue={params.row.Clicks_change} />
+            ), type: "number", align: "left",
             headerAlign: "left",
         },
         {
@@ -77,6 +82,10 @@ const OverviewComponent = () => {
             type: "number",
             align: "left",
             headerAlign: "left",
+             renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Impressions} percentValue={params.row.Impressions_change} />
+            ), type: "number", align: "left",
+            headerAlign: "left",
         },
         {
             field: "Total_Sales",
@@ -84,6 +93,10 @@ const OverviewComponent = () => {
             minWidth: 150,
             type: "number",
             align: "left",
+            headerAlign: "left",
+             renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Total_Sales} percentValue={params.row.Sales_change} />
+            ), type: "number", align: "left",
             headerAlign: "left",
         },
 
@@ -94,6 +107,10 @@ const OverviewComponent = () => {
             type: "number",
             align: "left",
             headerAlign: "left",
+            renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.Total_Orders} percentValue={params.row.Orders_change} />
+            ), type: "number", align: "left",
+            headerAlign: "left",
         },
         {
             field: "ROAS",
@@ -101,6 +118,10 @@ const OverviewComponent = () => {
             minWidth: 150,
             type: "number",
             align: "left",
+            headerAlign: "left",
+             renderCell: (params) => (
+                <ColumnPercentageDataComponent mainValue={params.row.ROAS} percentValue={params.row.ROAS_change} />
+            ), type: "number", align: "left",
             headerAlign: "left",
         },
         {
