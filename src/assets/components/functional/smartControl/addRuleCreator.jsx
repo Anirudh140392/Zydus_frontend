@@ -91,6 +91,7 @@ const AddRuleCreator = ({ operator, onSave, onClose, setShowRuleModal, open = tr
       bid_value: "",
       min_bid: "",
       max_bid: "",
+      description: "",
     },
   ]);
 
@@ -653,17 +654,15 @@ const AddRuleCreator = ({ operator, onSave, onClose, setShowRuleModal, open = tr
       operation_name: operationName || null,
       operation_type: operationValue ? Number(operationValue) : null,
 
-
       user_id: userId,
       user_name: userName,
       rule_name: ruleName,
       brand_name: brandName,
       brand_id: BRAND_MAP[brandName?.toLowerCase()] || null,
-      description,
+      description: description || "",
       frequency: Number(frequencyNumber) === 1 ? frequency : "",
       frequency_number: Number(frequencyNumber) || 1,
-
-      placements,
+      placements: placements || "search",
     };
 
     // filters.forEach((f) => {

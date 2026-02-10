@@ -13,8 +13,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import UploadRulesModal from "./modal/UploadRulesModal";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { Tooltip, Snackbar, Box, Button } from "@mui/material";
-import { Alert } from "react-bootstrap";
+import { Tooltip, Snackbar, Box, Button, Alert } from "@mui/material";
 import {
   Dialog,
   DialogTitle,
@@ -354,7 +353,7 @@ const SmartControlDatatable = () => {
         </span>
       ),
     },
-     { field: 'description', headerName: 'DESCRIPTION', minWidth: 250, renderCell: withTooltip },
+    { field: 'description', headerName: 'DESCRIPTION', minWidth: 250, renderCell: withTooltip },
 
     { field: 'pf_id', headerName: 'PF ID', minWidth: 100, renderCell: withTooltip },
     { field: 'user_id', headerName: 'USER ID', minWidth: 120, renderCell: withTooltip },
@@ -365,7 +364,7 @@ const SmartControlDatatable = () => {
     { field: 'sub_brand_id', headerName: 'SUB BRAND ID', minWidth: 140, renderCell: withTooltip },
     { field: 'sub_brand_name', headerName: 'SUB BRAND NAME', minWidth: 180, renderCell: withTooltip },
 
-   
+
     { field: 'targets', headerName: 'TARGETS', minWidth: 250, renderCell: renderArrayField('targets') },
     { field: 'campaigns', headerName: 'CAMPAIGNS', minWidth: 250, renderCell: renderArrayField('campaigns') },
   ], [updatingRuleId, deletingRuleId]);
@@ -382,6 +381,7 @@ const SmartControlDatatable = () => {
       type: item.type,
       schedule: item.frequency,
       status: item.status,
+      description: item.description || (item.targets && item.targets[0]?.description) || "",
       rule_id: item.rule_id
     }))
     : [];
@@ -616,7 +616,16 @@ const SmartControlDatatable = () => {
           onClose={handleSnackbarClose}
           severity={snackbar.severity}
           variant="filled"
-          sx={{ width: "100%" }}
+          sx={{
+            width: "100%",
+            borderRadius: "12px",
+            fontWeight: 600,
+            boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
+            backgroundColor: snackbar.severity === 'success' ? '#2e7d32' : undefined, // Force dark green if success
+            '& .MuiAlert-icon': {
+              fontSize: '24px'
+            }
+          }}
         >
           {snackbar.message}
         </Alert>
