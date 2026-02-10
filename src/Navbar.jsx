@@ -40,7 +40,7 @@ const RedirectLink = ({ url, label, pathName, onClick, isExternal = false }) => 
             case "Common Reports": return <GoToInsightIcon {...iconProps} />;
             case "History": return <HistoryIcon {...iconProps} />;
             case "Watch Tower": return <WatchTowerIcon {...iconProps} />;
-            case "Performance marketing": return <PerformanceOverviewIcon {...iconProps} />;
+            case "Marketplace": return <WalletIcon {...iconProps} />;
             default: return null;
         }
     };
@@ -420,7 +420,7 @@ const Navbar = () => {
                                 )}
                                 {["Amazon", "Zepto", "BigBasket", "Blinkit", "Swiggy"].includes(operatorName) && (
                                     <RedirectLink
-                                        label="Performance marketing"
+                                        label="Marketplace"
                                         url="https://app.powerbi.com/groups/me/apps/025c3e2b-77da-4843-a31a-9b9f070dc523/reports/62e09b5c-039f-443d-aa4d-2ebf53035c8b/5677b3c185f3b71e860a?experience=power-bi"
                                         pathName={pathName}
                                         isExternal={true}
