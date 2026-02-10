@@ -20,7 +20,48 @@ import { cachedAxiosGet } from "./services/cachedAxios";
 import { getCache } from "./services/cacheUtils";
 import WatchTowerIcon from "./assets/icons/navbar/watchTower";
 
-const RedirectLink = ({ url, label, pathName, onClick }) => {
+const RedirectLink = ({ url, label, pathName, onClick, isExternal = false }) => {
+    const iconColor = pathName === url ? "#fff" : "#78a8df";
+    const iconProps = {
+        iconClass: "me-2",
+        iconWidth: "15",
+        iconHeight: "15",
+        iconColor: iconColor
+    };
+
+    const getIcon = () => {
+        switch (label) {
+            case "Campaign Compass": return <PerformanceOverviewIcon {...iconProps} />;
+            case "Rules": return <SmartControlIcon {...iconProps} />;
+            case "Search Term Insights": return <SearchTermInsightIcon {...iconProps} />;
+            case "Product Analytics": return <ProductIntelligentCenterIcon {...iconProps} />;
+            case "Negative Keywords": return <BlockersIcon {...iconProps} />;
+            case "Recommendations": return <RecommendationsIcon {...iconProps} />;
+            case "Common Reports": return <GoToInsightIcon {...iconProps} />;
+            case "History": return <HistoryIcon {...iconProps} />;
+            case "Watch Tower": return <WatchTowerIcon {...iconProps} />;
+            case "Performance marketing": return <PerformanceOverviewIcon {...iconProps} />;
+            default: return null;
+        }
+    };
+
+    if (isExternal) {
+        return (
+            <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={pathName === url ? "active" : ""}
+                aria-label={label}
+                onClick={onClick}
+                style={{ textDecoration: 'none' }}
+            >
+                {getIcon()}
+                {label}
+            </a>
+        );
+    }
+
     return (
         <Link
             className={pathName === url ? "active" : ""}
@@ -28,75 +69,10 @@ const RedirectLink = ({ url, label, pathName, onClick }) => {
             aria-label={pathName}
             onClick={onClick}
         >
-            {label === "Campaign Compass" ? (
-                <PerformanceOverviewIcon
-                    iconClass="me-2"
-                    iconWidth="15"
-                    iconHeight="15"
-                    iconColor={pathName === url ? "#fff" : "#78a8df"}
-                />
-            ) : label === "Rules" ? (
-                <SmartControlIcon
-                    iconClass="me-2"
-                    iconWidth="15"
-                    iconHeight="15"
-                    iconColor={pathName === url ? "#fff" : "#78a8df"}
-                />
-            ) : label === "Search Term Insights" ? (
-                <SearchTermInsightIcon
-                    iconClass="me-2"
-                    iconWidth="15"
-                    iconHeight="15"
-                    iconColor={pathName === url ? "#fff" : "#78a8df"}
-                />
-            ) : label === "Product Analytics" ? (
-                <ProductIntelligentCenterIcon
-                    iconClass="me-2"
-                    iconWidth="15"
-                    iconHeight="15"
-                    iconColor={pathName === url ? "#fff" : "#78a8df"}
-                />
-            ) : label === "Negative Keywords" ? (
-                <BlockersIcon
-                    iconClass="me-2"
-                    iconWidth="15"
-                    iconHeight="15"
-                    iconColor={pathName === url ? "#fff" : "#78a8df"}
-                />
-            ) : label === "Recommendations" ? (
-                <RecommendationsIcon
-                    iconClass="me-2"
-                    iconWidth="15"
-                    iconHeight="15"
-                    iconColor={pathName === url ? "#fff" : "#78a8df"}
-                />
-            ) : label === "Common Reports" ? (
-                <GoToInsightIcon
-                    iconClass="me-2"
-                    iconWidth="15"
-                    iconHeight="15"
-                    iconColor={pathName === url ? "#fff" : "#78a8df"}
-                />
-            ): label === "History" ? (
-        <HistoryIcon
-          iconClass="me-2"
-          iconWidth="15"
-          iconHeight="15"
-          iconColor={pathName === url ? "#fff" : "#78a8df"}
-        />
-      ) : label === "Watch Tower" ? (
-        <WatchTowerIcon
-          iconClass="me-2"
-          iconWidth="15"
-          iconHeight="15"
-          iconColor={pathName === url ? "#fff" : "#78a8df"}
-        />
-      ) : (
-        ""
-      )}
-      {label}
-    </Link>
-  );
+            {getIcon()}
+            {label}
+        </Link>
+    );
 };
 
 const Navbar = () => {
@@ -226,7 +202,7 @@ const Navbar = () => {
                     setError('Failed to fetch wallet balance');
                     setWalletBalance("N/A");
                     setWalletLabel("Wallet Balance");
-                    
+
                     // Log additional error details for debugging
                     if (err.response) {
                         console.error('API Error Response:', {
@@ -259,31 +235,31 @@ const Navbar = () => {
                 const brandWallet = data.data.brand_wallets[brandName];
                 if (brandWallet && brandWallet.length > 0) {
                     const balance = brandWallet[0].balance;
-                    return { 
-                        balance: formatCurrency(balance), 
-                        label: `${brandName} Balance` 
+                    return {
+                        balance: formatCurrency(balance),
+                        label: `${brandName} Balance`
                     };
                 }
                 // If brand not found in response, show 0
-                return { 
-                    balance: formatCurrency(0), 
-                    label: `${brandName} Balance` 
+                return {
+                    balance: formatCurrency(0),
+                    label: `${brandName} Balance`
                 };
             }
 
             // If no brand selected, use total_balance
             if (data.data.total_balance !== undefined) {
-                return { 
-                    balance: formatCurrency(data.data.total_balance), 
-                    label: "Total Wallet Balance" 
+                return {
+                    balance: formatCurrency(data.data.total_balance),
+                    label: "Total Wallet Balance"
                 };
             }
 
             // Fallback for old API structure
             if (data.data.wallet_balance !== undefined) {
-                return { 
-                    balance: formatCurrency(data.data.wallet_balance), 
-                    label: "Wallet Balance" 
+                return {
+                    balance: formatCurrency(data.data.wallet_balance),
+                    label: "Wallet Balance"
                 };
             }
 
@@ -327,7 +303,7 @@ const Navbar = () => {
                         className="img-fluid"
                     />
                 </div>
-                <div className="error-message" style={{color: '#ff6b6b', padding: '20px', textAlign: 'center'}}>
+                <div className="error-message" style={{ color: '#ff6b6b', padding: '20px', textAlign: 'center' }}>
                     {error}
                 </div>
             </div>
@@ -380,33 +356,33 @@ const Navbar = () => {
                 </div>
                 <div className="redirection-navbar-con">
                     <Accordion className="navbar-accordion">
-                     <Accordion.Item eventKey="1">
-              <Accordion.Header>Control Tower</Accordion.Header>
-              <Accordion.Body>
-                {["Amazon","Zepto","BigBasket","Blinkit","Swiggy"].includes(operatorName) && (
-                  <RedirectLink
-                    url={`/watch-tower${operatorTypeParams === ""
-                        ? `?operator=${OPERATOR.AMAZON}`
-                        : operatorTypeParams
-                      }`}
-                    label="Watch Tower"
-                    pathName={pathName}
-                    onClick={() =>
-                      setPathName(
-                        `/watch-tower${operatorTypeParams === ""
-                          ? `?operator=${OPERATOR.AMAZON}`
-                          : operatorTypeParams
-                        }`
-                      )
-                    }
-                  />
-                )}
-              </Accordion.Body>
-            </Accordion.Item>
+                        <Accordion.Item eventKey="1">
+                            <Accordion.Header>Control Tower</Accordion.Header>
+                            <Accordion.Body>
+                                {["Amazon", "Zepto", "BigBasket", "Blinkit", "Swiggy"].includes(operatorName) && (
+                                    <RedirectLink
+                                        url={`/watch-tower${operatorTypeParams === ""
+                                            ? `?operator=${OPERATOR.AMAZON}`
+                                            : operatorTypeParams
+                                            }`}
+                                        label="Watch Tower"
+                                        pathName={pathName}
+                                        onClick={() =>
+                                            setPathName(
+                                                `/watch-tower${operatorTypeParams === ""
+                                                    ? `?operator=${OPERATOR.AMAZON}`
+                                                    : operatorTypeParams
+                                                }`
+                                            )
+                                        }
+                                    />
+                                )}
+                            </Accordion.Body>
+                        </Accordion.Item>
                         <Accordion.Item eventKey="1">
                             <Accordion.Header>Activation</Accordion.Header>
                             <Accordion.Body>
-                                {["Blinkit","Amazon","Zepto","Swiggy","BigBasket"].includes(operatorName) && (
+                                {["Blinkit", "Amazon", "Zepto", "Swiggy", "BigBasket"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -424,7 +400,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                {["Amazon","Zepto","BigBasket","Blinkit","Swiggy"].includes(operatorName) && (
+                                {["Amazon", "Zepto", "BigBasket", "Blinkit", "Swiggy"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/rules${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -442,7 +418,15 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                {["Blinkit","Amazon","Zepto","Swiggy"].includes(operatorName) && (
+                                {["Amazon", "Zepto", "BigBasket", "Blinkit", "Swiggy"].includes(operatorName) && (
+                                    <RedirectLink
+                                        label="Performance marketing"
+                                        url="https://app.powerbi.com/groups/me/apps/025c3e2b-77da-4843-a31a-9b9f070dc523/reports/62e09b5c-039f-443d-aa4d-2ebf53035c8b/5677b3c185f3b71e860a?experience=power-bi"
+                                        pathName={pathName}
+                                        isExternal={true}
+                                    />
+                                )}
+                                {["Blinkit", "Amazon", "Zepto", "Swiggy"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/keyword-analysis${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -460,7 +444,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                {!["Blinkit","Amazon","Zepto","Swiggy","BigBasket"].includes(operatorName) && (
+                                {!["Blinkit", "Amazon", "Zepto", "Swiggy", "BigBasket"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/product-analytics${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -478,7 +462,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                 {!["Amazon"].includes(operatorName) && (
+                                {!["Amazon"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/negative-keywords${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -496,7 +480,7 @@ const Navbar = () => {
                                         }
                                     />
                                 )}
-                                {["Blinkit","Amazon","Zepto","Swiggy"].includes(operatorName) && (
+                                {["Blinkit", "Amazon", "Zepto", "Swiggy"].includes(operatorName) && (
                                     <RedirectLink
                                         url={`/history${operatorTypeParams === ""
                                             ? `?operator=${OPERATOR.AMAZON}`
@@ -516,7 +500,7 @@ const Navbar = () => {
                                 )}
                             </Accordion.Body>
                         </Accordion.Item>
-                        
+
                     </Accordion>
                 </div>
             </div>
